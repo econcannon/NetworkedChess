@@ -1,0 +1,1 @@
+this folder is intended as the logic of the game

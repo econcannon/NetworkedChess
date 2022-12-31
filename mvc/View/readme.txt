@@ -1,0 +1,1 @@
+This folder is intended as the output of the game ie. the GUI

@@ -1,0 +1,1 @@
+Manages the input of the game
