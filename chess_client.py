@@ -8,8 +8,8 @@ class Chess_Client():
     def __init__(self) -> None:
         
         # Initialize variables
-        server_address = 'localhost'
-        server_port_number = 12000
+        server_address = '192.168.2.240'
+        server_port_number = 12001
         server_identifier = ( server_address , server_port_number )
 
         # Create client socket
@@ -40,3 +40,7 @@ class Chess_Client():
 
         return self.client_socket.recv(2048)  
           
+    
+    def disconnect(self):
+        
+        self.client_socket.close()

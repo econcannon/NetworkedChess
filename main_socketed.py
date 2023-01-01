@@ -6,7 +6,7 @@ import pygame
 
 # Determine host or client side
 while True:
-    print('Do you want to host this game?')
+    print('Do you want to host this game?\n')
     response = input('Enter \'y\' or \'n\'')
 
     if (response == 'y') or (response == 'n'):
@@ -33,5 +33,8 @@ else:
     gcont = GameController(color, client)
     gcont.start_game()
 
+if response == 'y':
+    server.disconnect()
+else: client.disconnect()
 
 
