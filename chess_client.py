@@ -33,14 +33,14 @@ class Chess_Client():
 
     def send_move(self, board):
 
-        self.client_socket.send(board)
+        self.client_socket.send(board.encode())
 
     
     def receive_move(self):
 
-        return self.client_socket.recv(2048)  
+        return self.client_socket.recv(2048).decode()  
           
     
     def disconnect(self):
-        
+
         self.client_socket.close()

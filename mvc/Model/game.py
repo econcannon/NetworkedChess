@@ -20,7 +20,7 @@ class Game:
         self.winner = 0
 
     def choose_move(self):
-
+        # Need this to return both the position that the selected piece is in as well as the position it is moving to
         while True:
             
             pygame.display.update()
@@ -124,6 +124,12 @@ class Game:
 
 
     def save_temp(self, piece, location):
+
+        self.temp_piece = piece
+        self.temp_pos = location
+
+
+    def server_temp(self, piece, location, other_piece, other_location, had_piece):
         """_summary_: When checking movements validity for checking if player in check, saving the pieces
                       information and location is necessary to reverse the move when necessary.
                       The lost information when moving is the moved piece's prior location, and the piece being captured
@@ -132,8 +138,11 @@ class Game:
             piece (_type_): The value of the cell which the piece is being moved to. Could contain a piece, or could be empty
             location (_type_): The location from which the piece is being moved.
         """        
-        self.temp_pos = location
-        self.temp_piece = piece
+        self.temp_pos1 = location
+        self.temp_piece1 = piece
+        self.temp_pos2 = other_location
+        self.temp_piece2 = other_piece
+        self.temp_had_piece = had_piece
 
 
     def reverse_move(self, piece, location, other = 0, move = 0):
@@ -323,9 +332,6 @@ class Game:
             return True
 
                     
-                
-                    
-
     def get_winner(self):
         """:Once a player has won, returns which player was victorious
 
@@ -334,6 +340,7 @@ class Game:
         """        
         
         return self.other_player
+
 
     def update_piece_location(self, location, piece = 0):
         """: updates a pieces attributes to its new location. If piece is passed as argument, changes location of 
@@ -361,3 +368,9 @@ class Game:
         self.board = move
         self.board.update_list()
         self.append_all_moves()
+
+    
+    def server_reverse_move(self):
+        if not self.temp_had_piece:
+            self.reverse_move(self.temp_piece1, self.temp_pos1, self.temp_piece2, self.temp_pos2)
+        else: self.reverse_move(self.temp_piece1, self.temp_pos1)
