@@ -54,21 +54,20 @@ class Chess_Server():
                 self.first = 0
                 message = 'b'.encode()
                 self.connection_socket[1].send(message)
-                self.connection_socket[1].color = 'b'
+               
                 # Confirmation of color selection for client 1
                 self.connection_socket[0].send(answer.encode())
-                self.connection_socket[0].color = 'w'
                 break
+
             elif answer == 'b': 
                 # For game controller to know which connection goes first
                 self.first = 1
                 message = 'w'.encode()
                 self.connection_socket[1].send(message)
-                self.connection_socket[1].color = 'w'
                 # Confirmation of color selection for client 1
                 self.connection_socket[0].send(answer.encode())
-                self.connection_socket[0].color = 'b'
                 break
+            
             else: 
                 message = ('Invalid Input, please try again...').encode()
                 self.connection_socket[0].send(message)

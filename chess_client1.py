@@ -27,15 +27,18 @@ class Chess_Client():
 
         # Receive and Dissect server message
         while True:
+
             message = self.client_socket.recv(1024).decode()
-            print(message)
+            print('Received message:\n' + message)
+            unchanged_message = message
             message = message.split()
-            if (message == 'b') or (message == 'w'):
+
+            if (message[0] == 'b') or (message[0] == 'w'):
                 self.color = message
-                print(f'You are {message}')
+                print(f'You are {unchanged_message}')
                 break
             elif message[0] == 'Choose':
-                response = (input(message)).encode()
+                response = input().encode()
                 self.client_socket.send(response)
             elif message[0] == 'Invalid':
                 print(message)  
@@ -44,16 +47,6 @@ class Chess_Client():
         self.disconnect()
     
 
-    def send_move(self, message):
-
-        self.client_socket.send(message.encode())
-
-    
-    def receive_packet(self):
-
-        return self.client_socket.recv(2048).decode()  
-          
-    
     def disconnect(self):
 
         self.client_socket.close()
@@ -61,4 +54,5 @@ class Chess_Client():
 
     def start_game(self):
 
-        gcont = ClientGameController(self.color, self.client_socket)
+        gcont = ClientGameController(self.color)
+        gcont.start_game()

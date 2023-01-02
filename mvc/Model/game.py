@@ -7,7 +7,7 @@ from pygame.locals import *
 class Game:
     EMPTY = int(0)
 
-    def __init__(self, board: Board, view: GameView, color) -> None:
+    def __init__(self, board: Board, color, view: GameView = 0) -> None:
 
         self.color = color
         self.view = view
@@ -173,7 +173,8 @@ class Game:
             self.board.set_cell(other, move[0], move[1])
             #restores list 
             self.board.pieces_lst.append(other)
-            self.view.display_board(self.color)
+            if self.view:
+                self.view.display_board(self.color)
 
         else: 
             piece.turn -= 1
@@ -182,7 +183,8 @@ class Game:
             #restore board
             self.board.set_cell(piece, location[0], location[1])
             self.remove_piece(move)
-            self.view.display_board(self.color)
+            if self.view:
+                self.view.display_board(self.color)
 
 
     def remove_piece(self, location):
@@ -297,7 +299,8 @@ class Game:
                         #updates board info
                         self.execute_move(piece, move)
                         #updates list info
-                        self.view.board.update_list()
+                        
+                        self.board.update_list()
                         #updates attribute info
                         self.update_piece_location(move, piece)
                         self.get_new_moves()

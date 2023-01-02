@@ -9,7 +9,7 @@ class ServerGameController():
         # Allow for server color to be default white for simplicity
         self.color = 'w'
         self.board = Board(600, 600)
-        self.game = Game(self.board, self.view, self.color)
+        self.game = Game(self.board, self.color)
         self.first = first
 
 
