@@ -30,9 +30,10 @@ class ClientGameController:
                 self.make_move()
 
             elif message[0] == 'Move':
-                message = pickle.loads(self.connection.recv(2048))
-                piece = self.game.board.get_cell(message[0][0], message[0][1])
-                self.game.execute_move(piece, message[1])
+                message1 = pickle.loads(self.connection.recv(8192))
+                message2 = pickle.loads(self.connection.recv(8192))
+                piece = self.game.board.get_cell(message1[0], message1[1])
+                self.game.execute_move(piece, message2)
                 
             elif message[0] == 'Invalid':
                 self.make_move()
@@ -76,7 +77,10 @@ class ClientGameController:
                 self.game.server_temp(self.view.has_selected_piece, self.view.has_selected_piece.location, cell_val, cell, had_piece)
                 #updates board info
                 self.game.execute_move(self.view.has_selected_piece, cell)
-                self.connection.send(pickle.dumps((self.view.has_selected_piece.location, cell)))
+                move1 = self.view.has_selected_piece.location
+                move2 = cell
+                self.connection.send(pickle.dumps(move1))
+                self.connection.send(pickle.dumps(move2))
                 #updates list info
                 self.view.board.update_list()
                 #updates attribute info
@@ -84,7 +88,7 @@ class ClientGameController:
                 self.game.get_new_moves()
                 
                 # Wait for the server to check for check condition, then proceed (returns either 1 or 0)
-                valid = pickle.loads(self.connection.recv(2048))
+                valid = self.connection.recv(16).decode()
                 
                 if valid:
                     

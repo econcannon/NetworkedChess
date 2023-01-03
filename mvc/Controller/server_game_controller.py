@@ -28,20 +28,25 @@ class ServerGameController():
                 while True:
 
                     # Receive move, check for its validity and update local memory
-                    move = pickle.loads(self.connection[self.first].recv(1024))
-                    move = move.split()
-                    valid = self.make_move(move)
+                    move1 = pickle.loads(self.connection[self.first].recv(1024))
+                    move2 = pickle.loads(self.connection[self.first].recv(1024))
+                    print(move1, move2)
+                    valid = self.make_move((move1, move2))
+                    print('Validity Checked')
 
                     # If it is a valid move, check for checkmate, then send to opponent
                     if valid:
-
+                        print('Valid Move')
                         if not self.game.check_mate():
                             ack = '1'.encode()
-                            message = pickle.dumps(move)
+                            message1 = pickle.dumps(move1)
+                            message2 = pickle.dumps(move2)
                             code = 'Move'.encode()
                             self.connection[self.first].send(ack)
                             self.connection[(self.first + 1)%2].send(code)
-                            self.connection[(self.first + 1)%2].send(message)
+                            self.connection[(self.first + 1)%2].send(message1)
+                            self.connection[(self.first + 1)%2].send(message2)
+                            print('Move Sent')
                             break
                         else: 
                             self.send_results(count)
@@ -60,19 +65,23 @@ class ServerGameController():
                 while True:
 
                     # Receive move, check for its validity and update local memory
-                    move = pickle.loads(self.connection[(self.first + 1)%2].recv(1024))
-                    valid = self.make_move(move)
+                    move1 = pickle.loads((self.connection[(self.first + 1)%2].recv(1024)))
+                    move2 = pickle.loads((self.connection[(self.first + 1)%2].recv(1024)))
+                    print(move1, move2)
+                    valid = self.make_move((move1, move2))
 
                     # If it is a valid move, check for checkmate, then send to opponent
                     if valid:
 
                         if not self.game.check_mate():
                             ack = '1'.encode()
-                            message = pickle.dumps(move)
+                            message1 = pickle.dumps(move1)
+                            message2 = pickle.dumps(move2)
                             code = 'Move'.encode()
                             self.connection[(self.first + 1)%2].send(ack)
-                            self.connection[self.first].send(message)
                             self.connection[self.first].send(code)
+                            self.connection[self.first].send(message1)
+                            self.connection[self.first].send(message2)
                             break
                         else: 
                             self.send_results(count)
