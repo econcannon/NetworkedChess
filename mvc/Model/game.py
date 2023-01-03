@@ -116,6 +116,7 @@ class Game:
 
         self.remove_piece(piece.location)
         self.board.set_cell(piece, location[0], location[1])
+        print(location[0], location[1])
         if str(piece) == 'King':
             if piece.color == 'b':
                 self.board.black_king_pos = location

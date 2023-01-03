@@ -33,13 +33,16 @@ class ClientGameController:
             elif message[0] == 'Move':
                 message1 = pickle.loads(self.connection.recv(8192))
                 message2 = pickle.loads(self.connection.recv(8192))
+                print('Received', message1, message2)
                 piece = self.game.board.get_cell(message1[0], message1[1])
+                print(str(piece))
                 self.game.execute_move(piece, message2)
-                #updates list info
-                self.view.board.update_list()
                 #updates attribute info
                 self.game.update_piece_location(message2, piece)
                 self.game.get_new_moves()
+                #updates list info
+                self.view.board.update_list()
+                print(str(self.game.board))
                 self.game.change_curr_player()
                 
             elif message[0] == 'Invalid':
@@ -89,7 +92,7 @@ class ClientGameController:
                 move2 = cell
 
                 self.connection.send(pickle.dumps(move1))
-                time.sleep(.001)
+                time.sleep(.01)
                 self.connection.send(pickle.dumps(move2))
                 print('Move Sent')
 
