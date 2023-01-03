@@ -2,6 +2,7 @@ from mvc.Model.board import Board
 from mvc.Model.game import Game
 from mvc.View.game_view import GameView
 import pygame
+import pickle
 
 class ClientGameController:
 
@@ -10,7 +11,7 @@ class ClientGameController:
         self.connection = connection
         self.board = Board(600, 600)
         self.view = GameView(self.board, self.color)
-        self.game = Game(self.board, self.view, self.color)
+        self.game = Game(self.board, self.color, self.view)
         pygame.init()
 
 
@@ -29,7 +30,7 @@ class ClientGameController:
                 self.make_move()
 
             elif message[0] == 'Move':
-                message = self.connection.recv(2048).decode()
+                message = pickle.loads(self.connection.recv(2048))
                 piece = self.game.board.get_cell(message[0][0], message[0][1])
                 self.game.execute_move(piece, message[1])
                 
@@ -75,7 +76,7 @@ class ClientGameController:
                 self.game.server_temp(self.view.has_selected_piece, self.view.has_selected_piece.location, cell_val, cell, had_piece)
                 #updates board info
                 self.game.execute_move(self.view.has_selected_piece, cell)
-                self.connection.send((self.view.has_selected_piece.location, cell).encode())
+                self.connection.send(pickle.dumps((self.view.has_selected_piece.location, cell)))
                 #updates list info
                 self.view.board.update_list()
                 #updates attribute info
@@ -83,7 +84,7 @@ class ClientGameController:
                 self.game.get_new_moves()
                 
                 # Wait for the server to check for check condition, then proceed (returns either 1 or 0)
-                valid = self.connection.recv(2048).decode()
+                valid = pickle.loads(self.connection.recv(2048))
                 
                 if valid:
                     

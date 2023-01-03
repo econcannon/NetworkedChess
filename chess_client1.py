@@ -34,7 +34,7 @@ class Chess_Client():
             message = message.split()
 
             if (message[0] == 'b') or (message[0] == 'w'):
-                self.color = message
+                self.color = unchanged_message
                 print(f'You are {unchanged_message}')
                 break
             elif message[0] == 'Choose':
@@ -54,5 +54,5 @@ class Chess_Client():
 
     def start_game(self):
 
-        gcont = ClientGameController(self.color)
+        gcont = ClientGameController(self.color, self.client_socket)
         gcont.start_game()

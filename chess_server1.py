@@ -67,7 +67,7 @@ class Chess_Server():
                 # Confirmation of color selection for client 1
                 self.connection_socket[0].send(answer.encode())
                 break
-            
+
             else: 
                 message = ('Invalid Input, please try again...').encode()
                 self.connection_socket[0].send(message)
@@ -79,6 +79,7 @@ class Chess_Server():
     def start_game(self):
 
         gcont = ServerGameController(self.connection_socket, self.first)
+        gcont.start_game()
 
     def send_move(self, connection, move):
 

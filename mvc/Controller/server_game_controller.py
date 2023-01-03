@@ -1,6 +1,7 @@
 from mvc.Model.board import Board
 from mvc.Model.game import Game
 import socket
+import pickle
 
 class ServerGameController():
 
@@ -27,7 +28,7 @@ class ServerGameController():
                 while True:
 
                     # Receive move, check for its validity and update local memory
-                    move = self.connection[self.first].recv(1024).decode()
+                    move = pickle.loads(self.connection[self.first].recv(1024))
                     move = move.split()
                     valid = self.make_move(move)
 
@@ -36,7 +37,7 @@ class ServerGameController():
 
                         if not self.game.check_mate():
                             ack = '1'.encode()
-                            message = move.encode()
+                            message = pickle.dumps(move)
                             code = 'Move'.encode()
                             self.connection[self.first].send(ack)
                             self.connection[(self.first + 1)%2].send(code)
@@ -59,7 +60,7 @@ class ServerGameController():
                 while True:
 
                     # Receive move, check for its validity and update local memory
-                    move = self.connection[(self.first + 1)%2].recv(1024).decode()
+                    move = pickle.loads(self.connection[(self.first + 1)%2].recv(1024))
                     valid = self.make_move(move)
 
                     # If it is a valid move, check for checkmate, then send to opponent
@@ -67,7 +68,7 @@ class ServerGameController():
 
                         if not self.game.check_mate():
                             ack = '1'.encode()
-                            message = move.encode()
+                            message = pickle.dumps(move)
                             code = 'Move'.encode()
                             self.connection[(self.first + 1)%2].send(ack)
                             self.connection[self.first].send(message)
