@@ -3,6 +3,7 @@ from mvc.Model.game import Game
 from mvc.View.game_view import GameView
 import pygame
 import pickle
+import time
 
 class ClientGameController:
 
@@ -34,6 +35,12 @@ class ClientGameController:
                 message2 = pickle.loads(self.connection.recv(8192))
                 piece = self.game.board.get_cell(message1[0], message1[1])
                 self.game.execute_move(piece, message2)
+                #updates list info
+                self.view.board.update_list()
+                #updates attribute info
+                self.game.update_piece_location(message2, piece)
+                self.game.get_new_moves()
+                self.game.change_curr_player()
                 
             elif message[0] == 'Invalid':
                 self.make_move()
@@ -64,7 +71,7 @@ class ClientGameController:
         while True:
 
                 cell = self.game.choose_move()
-            
+
                 if not self.game.check_move(self.view.has_selected_piece, cell):
                     continue
 
@@ -77,10 +84,15 @@ class ClientGameController:
                 self.game.server_temp(self.view.has_selected_piece, self.view.has_selected_piece.location, cell_val, cell, had_piece)
                 #updates board info
                 self.game.execute_move(self.view.has_selected_piece, cell)
+
                 move1 = self.view.has_selected_piece.location
                 move2 = cell
+
                 self.connection.send(pickle.dumps(move1))
+                time.sleep(.001)
                 self.connection.send(pickle.dumps(move2))
+                print('Move Sent')
+
                 #updates list info
                 self.view.board.update_list()
                 #updates attribute info

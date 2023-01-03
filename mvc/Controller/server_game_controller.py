@@ -2,6 +2,7 @@ from mvc.Model.board import Board
 from mvc.Model.game import Game
 import socket
 import pickle
+import time
 
 class ServerGameController():
 
@@ -39,14 +40,19 @@ class ServerGameController():
                         print('Valid Move')
                         if not self.game.check_mate():
                             ack = '1'.encode()
+                            move1 = (7 - move1[0], 7 - move1[1])
+                            move2 = (7 - move2[0], 7 - move2[1])
                             message1 = pickle.dumps(move1)
                             message2 = pickle.dumps(move2)
                             code = 'Move'.encode()
                             self.connection[self.first].send(ack)
                             self.connection[(self.first + 1)%2].send(code)
+                            time.sleep(.001)
                             self.connection[(self.first + 1)%2].send(message1)
+                            time.sleep(.001)
                             self.connection[(self.first + 1)%2].send(message2)
                             print('Move Sent')
+                            self.game.change_curr_player()
                             break
                         else: 
                             self.send_results(count)
@@ -75,12 +81,16 @@ class ServerGameController():
 
                         if not self.game.check_mate():
                             ack = '1'.encode()
+                            move1 = (7 - move1[0], 7 - move1[1])
+                            move2 = (7 - move2[0], 7 - move2[1])
                             message1 = pickle.dumps(move1)
                             message2 = pickle.dumps(move2)
                             code = 'Move'.encode()
                             self.connection[(self.first + 1)%2].send(ack)
                             self.connection[self.first].send(code)
+                            time.sleep(.001)
                             self.connection[self.first].send(message1)
+                            time.sleep(.001)
                             self.connection[self.first].send(message2)
                             break
                         else: 
@@ -133,6 +143,8 @@ class ServerGameController():
         # Updates attribute info
         self.game.update_piece_location(move[1], piece)
         self.game.get_new_moves()
+
+        print(str(self.game.board))
                 
         if not self.game.is_in_check():
                 
