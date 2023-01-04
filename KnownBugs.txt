@@ -1,0 +1,2 @@
+- Did not register that king was in check
+    then allowed piece to capture the king which resulted in a checkmate

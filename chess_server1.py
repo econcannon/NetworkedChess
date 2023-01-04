@@ -7,6 +7,7 @@
 from mvc.Controller.server_game_controller import ServerGameController
 import socket
 import time
+import atexit
 
 
 class Chess_Server():
@@ -15,7 +16,7 @@ class Chess_Server():
 
         # Initialize variables
         HOST = ''
-        PORT = 12002
+        PORT = 12004
         IDENTIFIER = (HOST, PORT)
 
         # Create and bind Server Soceket
@@ -23,12 +24,15 @@ class Chess_Server():
         print('Host socket created...')
             
         self.server_socket.bind(IDENTIFIER)
+        self.connection_socket = [0 for i in range(2)]
+        self.client_address = [0 for i in range(2)]
+
+        atexit.register(self.disconnect())
 
         # Change default timeout
         self.server_socket.settimeout(60)
 
-        self.connection_socket = [0 for i in range(2)]
-        self.client_address = [0 for i in range(2)]
+        
         
         print('Server listening for connection...')
         self.server_socket.listen(2)
