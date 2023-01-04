@@ -17,7 +17,7 @@ class Chess_Client():
         # Create client socket
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('Client socket created...')
-        atexit.register(self.disconnect())
+        atexit.register(self.disconnect)
 
         # Change default timeout
         self.client_socket.settimeout(30)
@@ -44,6 +44,7 @@ class Chess_Client():
             else: 
                 if not message:
                     print('Unknown error')
+                else: break
 
         # Receive and Dissect server message
         while True:
@@ -65,12 +66,14 @@ class Chess_Client():
         
         self.start_game()
         time.sleep(5)
+        atexit.unregister(self.disconnect)
         self.disconnect()
     
 
     def disconnect(self):
 
         self.client_socket.close()
+        print('Connections Closed')
 
 
     def start_game(self):

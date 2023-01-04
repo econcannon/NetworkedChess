@@ -27,7 +27,7 @@ class Chess_Server():
         self.connection_socket = [0 for i in range(2)]
         self.client_address = [0 for i in range(2)]
 
-        atexit.register(self.disconnect())
+        atexit.register(self.disconnect)
 
         # Change default timeout
         self.server_socket.settimeout(60)
@@ -79,6 +79,7 @@ class Chess_Server():
 
         self.start_game()
         time.sleep(7)
+        atexit.unregister(self.disconnect)
         self.disconnect()
         
     
@@ -100,5 +101,7 @@ class Chess_Server():
     def disconnect(self):
 
         for connection in self.connection_socket:
-            connection.close() 
+            if connection:
+                connection.close()
         self.server_socket.close()
+        print('Connections Closed')

@@ -165,29 +165,29 @@ class GameView:
         if winner:
             if self.color == 'b':
                 title = pygame.image.load('mvc\\Model\\Imgs\\Black_Wins!.png')
-                self.window.blit(title, (150, 250))
                 title = pygame.transform.scale(title, (300, 100))
                 self.window.blit(title, (150, 250))
+                print('Black wins blitted')
                 pygame.display.update()
             
             else:
                 title = pygame.image.load('mvc\\Model\\Imgs\\White_Wins!.png')
-                self.window.blit(title, (150, 250))
                 title = pygame.transform.scale(title, (300, 100))
                 self.window.blit(title, (150, 250))
+                print('White wins blitted')
                 pygame.display.update()
    
         else:
             if self.color == 'b':
                 title = pygame.image.load('mvc\\Model\\Imgs\\Black_loses.png')
-                self.window.blit(title, (150, 250))
                 title = pygame.transform.scale(title, (300, 100))
                 self.window.blit(title, (150, 250))
+                print('Black loses blitted')
                 pygame.display.update()
             
             else:
                 title = pygame.image.load('mvc\\Model\\Imgs\\White_loses.png')
-                self.window.blit(title, (150, 250))
                 title = pygame.transform.scale(title, (300, 100))
                 self.window.blit(title, (150, 250))
+                print('White loses blitted')
                 pygame.display.update()

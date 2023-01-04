@@ -45,13 +45,16 @@ class Game:
                             if cell.color == self.current_player:
 
                                 if self.view.has_selected_piece:
-                                    self.view.display_board(self.color)
+
                                     self.view.is_selected_piece(cell)
+                                    
                                     if self.current_player == 'b':
                                         self.view.display_reverse_block()
                                         
                                     else: 
                                         self.view.display_block_border()
+
+                                    self.view.display_board(self.color)
                                         
                                 else: 
                                     self.view.is_selected_piece(cell)

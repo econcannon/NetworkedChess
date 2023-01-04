@@ -25,7 +25,6 @@ class ClientGameController:
             self.view.display_board(self.color)
 
             message = self.connection.recv(2048).decode()
-            print(message)
             message = message.split()
 
             if message[0] == 'Your':
@@ -48,16 +47,15 @@ class ClientGameController:
                             self.connection.send('1'.encode())
                             break
 
-                print('Received', message1, message2)
                 piece = self.game.board.get_cell(message1[0], message1[1])
-                print(str(piece))
+                
                 self.game.execute_move(piece, message2)
                 #updates attribute info
                 self.game.update_piece_location(message2, piece)
                 self.game.get_new_moves()
                 #updates list info
                 self.view.board.update_list()
-                print(str(self.game.board))
+                
                 self.view.display_board(self.color)
                 self.game.check_mate(self.color)
                 self.game.change_curr_player()
@@ -113,7 +111,6 @@ class ClientGameController:
                 self.connection.send(pickle.dumps(move1))
                 time.sleep(.1)
                 self.connection.send(pickle.dumps(move2))
-                print('Move Sent')
 
                 #updates list info
                 self.view.board.update_list()
