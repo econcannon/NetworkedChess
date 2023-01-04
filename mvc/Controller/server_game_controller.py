@@ -18,11 +18,15 @@ class ServerGameController():
     def start_game(self): 
     
         count = self.first
+        first_count = 0
+        second_count = 0
 
         while True:
             
+            print(count)
             # Every loop the count will determine which player makes a move
             if (count%2 == self.first):
+                print('Sending turn start code1')
                 message = 'Your Turn'.encode()
                 self.connection[self.first].send(message)
 
@@ -45,35 +49,43 @@ class ServerGameController():
                     if valid:
                         print('Valid Move')
                         if not self.game.check_mate():
-                            ack = '1'.encode()
-                            if self.game.current_player == 'b':
-                                move1 = (7 - move1[0], 7 - move1[1])
-                                move2 = (7 - move2[0], 7 - move2[1])
-                            
+                            ack = '1'.encode()                        
                             print('Sending', move1, move2)
                             message1 = pickle.dumps(move1)
                             message2 = pickle.dumps(move2)
                             code = 'Move'.encode()
                             self.connection[self.first].send(ack)
-                            self.connection[(self.first + 1)%2].send(code)
-                            time.sleep(.01)
-                            self.connection[(self.first + 1)%2].send(message1)
-                            time.sleep(.01)
-                            self.connection[(self.first + 1)%2].send(message2)
+
+                            recv_ack = False
+                            while not recv_ack:
+                                print('Sending code...')
+                                self.connection[(self.first + 1)%2].send(code)
+                                time.sleep(.5)
+                                print('Sending message1...')
+                                self.connection[(self.first + 1)%2].send(message1)
+                                time.sleep(.5)
+                                print('Sending message2...')
+                                self.connection[(self.first + 1)%2].send(message2)
+                                time.sleep(2)
+                                recv_ack = self.connection[(self.first + 1)%2].recv(1024).decode()
+
                             print('Move Sent')
                             self.game.change_curr_player()
                             break
                         else: 
-                            self.send_results(count)
+                            first_count += 1
+                            self.send_results(first_count)
                             return
 
                     else:
                         ack = '0'.encode()
                         self.connection[self.first].send(ack)
-
+                print('count incremented')
                 count += 1
+                first_count += 1
 
             else:
+                print('Sending turn start code2')
                 message = 'Your Turn'.encode()
                 self.connection[(self.first + 1)%2].send(message)
 
@@ -90,23 +102,32 @@ class ServerGameController():
 
                         if not self.game.check_mate():
                             ack = '1'.encode()
-                            move1 = (7 - move1[0], 7 - move1[1])
-                            move2 = (7 - move2[0], 7 - move2[1])
                             print('Sending', move1, move2)
                             message1 = pickle.dumps(move1)
                             message2 = pickle.dumps(move2)
                             code = 'Move'.encode()
                             self.connection[(self.first + 1)%2].send(ack)
-                            self.connection[self.first].send(code)
-                            time.sleep(.01)
-                            self.connection[self.first].send(message1)
-                            time.sleep(.01)
-                            self.connection[self.first].send(message2)
+                            
+                            recv_ack = False
+                            while not recv_ack:
+                                print('Sending code...')
+                                self.connection[self.first].send(code)
+                                time.sleep(.5)
+                                print('Sending message1...')
+                                self.connection[self.first].send(message1)
+                                time.sleep(.5)
+                                print('Sending message2...')
+                                self.connection[self.first].send(message2)
+                                time.sleep(2)
+                                recv_ack = self.connection[self.first].recv(1024).decode()
+                                
+
                             print('Move Sent')
                             self.game.change_curr_player()
                             break
                         else: 
-                            self.send_results(count)
+                            second_count += 1
+                            self.send_results(second_count)
                             return
 
                     else:
@@ -114,12 +135,13 @@ class ServerGameController():
                         self.connection[(self.first + 1)%2].send(ack)
                         
                 count += 1
+                second_count += 1
             
     
     def send_results(self, count):
 
-        message1 = f'Winner! in {count/2} moves'.encode()
-        message2 = f'Loser... in {count/2} moves'.encode()
+        message1 = f'Winner! in {count} moves'.encode()
+        message2 = f'Loser... in {count} moves'.encode()
         
         if (count%2 == self.first):
             

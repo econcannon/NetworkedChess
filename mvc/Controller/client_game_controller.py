@@ -1,6 +1,7 @@
 from mvc.Model.board import Board
 from mvc.Model.game import Game
 from mvc.View.game_view import GameView
+import socket
 import pygame
 import pickle
 import time
@@ -31,8 +32,22 @@ class ClientGameController:
                 self.make_move()
 
             elif message[0] == 'Move':
-                message1 = pickle.loads(self.connection.recv(8192))
-                message2 = pickle.loads(self.connection.recv(8192))
+
+                while True:
+                    try: 
+                        message1 = pickle.loads(self.connection.recv(8192))
+                        message2 = pickle.loads(self.connection.recv(8192))
+                        
+                    except socket.timeout as e:
+                        self.connection.send(False.encode())
+                    
+                    else:
+                        if not (message1 and message2):
+                            exit()
+                        else:
+                            self.connection.send(True.encode())
+                            break
+
                 print('Received', message1, message2)
                 piece = self.game.board.get_cell(message1[0], message1[1])
                 print(str(piece))
@@ -43,6 +58,7 @@ class ClientGameController:
                 #updates list info
                 self.view.board.update_list()
                 print(str(self.game.board))
+                self.view.display_board(self.color)
                 self.game.change_curr_player()
                 
             elif message[0] == 'Invalid':
@@ -92,7 +108,7 @@ class ClientGameController:
                 move2 = cell
 
                 self.connection.send(pickle.dumps(move1))
-                time.sleep(.01)
+                time.sleep(.1)
                 self.connection.send(pickle.dumps(move2))
                 print('Move Sent')
 

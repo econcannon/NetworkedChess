@@ -32,8 +32,8 @@ class Game:
         
                     if event.button == 1:
                         pos = (row, col)
-                        if self.current_player == 'b':
-                            pos = (7 - pos[0], 7 - pos[1])
+                        #if self.current_player == 'b':
+                        #    pos = (7 - pos[0], 7 - pos[1])
 
                         cell = self.board.get_cell(pos[0], pos[1])
                         if cell == 0:
