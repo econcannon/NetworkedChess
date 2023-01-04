@@ -6,6 +6,7 @@
 
 from mvc.Controller.server_game_controller import ServerGameController
 import socket
+import time
 
 
 class Chess_Server():
@@ -73,6 +74,7 @@ class Chess_Server():
                 self.connection_socket[0].send(message)
 
         self.start_game()
+        time.sleep(7)
         self.disconnect()
         
     

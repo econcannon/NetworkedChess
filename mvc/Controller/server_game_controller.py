@@ -72,6 +72,7 @@ class ServerGameController():
                             print('Move Sent')
                             self.game.change_curr_player()
                             break
+
                         else: 
                             ack = '1'.encode()                        
                             print('Sending', move1, move2)
@@ -166,23 +167,27 @@ class ServerGameController():
         message2 = '0'.encode()
         
         if (count%2 == self.first):
-            
+            print('Entered First')
             self.connection[self.first].send(code)
             time.sleep(.1)
             self.connection[(self.first + 1)%2].send(code)
             time.sleep(.1)
+            print('Sent', message1)
             self.connection[self.first].send(message1)     
             time.sleep(.1)     
+            print('Sent', message2)
             self.connection[(self.first + 1)%2].send(message2)
 
         else: 
-
+            print('Entered Second')
             self.connection[self.first].send(code)
             time.sleep(.1)
             self.connection[(self.first + 1)%2].send(code)
             time.sleep(.1)
+            print('Sent', message2)
             self.connection[self.first].send(message2)    
             time.sleep(.1)      
+            print('Sent', message1)
             self.connection[(self.first + 1)%2].send(message1)
 
 

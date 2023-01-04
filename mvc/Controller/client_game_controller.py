@@ -59,6 +59,7 @@ class ClientGameController:
                 self.view.board.update_list()
                 print(str(self.game.board))
                 self.view.display_board(self.color)
+                self.game.check_mate(self.color)
                 self.game.change_curr_player()
                 
             elif message[0] == 'Invalid':
@@ -70,6 +71,7 @@ class ClientGameController:
                 if message:
                     self.view.display_winner(True)
                 else: self.view.display_winner(False)
+                return
 
             elif message:
                 continue

@@ -2,6 +2,7 @@
 
 from mvc.Controller.client_game_controller import ClientGameController
 import socket
+import time
 
 class Chess_Client():
     
@@ -20,10 +21,27 @@ class Chess_Client():
         self.client_socket.settimeout(30)
 
         # Connect to the Server
-        self.client_socket.connect(server_identifier)
-        
-        # Receive initial message from server
-        print(self.client_socket.recv(1024).decode())
+        count = 0
+        while True:
+            try:
+                self.client_socket.connect(server_identifier)
+                # Receive initial message from server
+                message = 0
+                message = self.client_socket.recv(1024).decode()
+                print(message)
+
+            except TimeoutError as e:
+                if count < 4:
+                    print('Connection failed, trying again...')
+                    count += 1
+                else:
+                    print('Connection denied, exiting program')
+                    exit()
+                continue
+
+            else: 
+                if not message:
+                    print('Unknown error')
 
         # Receive and Dissect server message
         while True:
@@ -44,6 +62,7 @@ class Chess_Client():
                 print(message)  
         
         self.start_game()
+        time.sleep(5)
         self.disconnect()
     
 
