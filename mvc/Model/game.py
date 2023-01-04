@@ -32,8 +32,8 @@ class Game:
         
                     if event.button == 1:
                         pos = (row, col)
-                        #if self.current_player == 'b':
-                        #    pos = (7 - pos[0], 7 - pos[1])
+                        if self.current_player == 'b':
+                            pos = (7 - pos[0], 7 - pos[1])
 
                         cell = self.board.get_cell(pos[0], pos[1])
                         if cell == 0:
@@ -116,7 +116,7 @@ class Game:
 
         self.remove_piece(piece.location)
         self.board.set_cell(piece, location[0], location[1])
-        print(location[0], location[1])
+        
         if str(piece) == 'King':
             if piece.color == 'b':
                 self.board.black_king_pos = location
@@ -183,7 +183,7 @@ class Game:
             piece.location = location
             #restore board
             self.board.set_cell(piece, location[0], location[1])
-            self.remove_piece(move)
+            self.remove_piece(piece.location)
             if self.view:
                 self.view.display_board(self.color)
 
@@ -222,7 +222,7 @@ class Game:
             self.other_player = Player.Black
 
 
-    def is_in_check(self):
+    def is_in_check(self, color):
         """_summary_: Determines if the current player is in check by going through each of the opponent's
                       piece's moves and determining if the kings loation is within one of the moves.
 
@@ -241,7 +241,7 @@ class Game:
         #once all moves are appended, see if in check
         for piece in self.board.pieces_lst:
 
-            if self.current_player == 'w':
+            if color == 'w':
 
                 if piece.color == 'w':
                     continue
@@ -249,7 +249,7 @@ class Game:
                 if piece.color == 'b':
 
                     if white_king_loc in piece.moves:
-                        print('IS IN CHECK')
+                        
                         return True
                         
                     else: continue
@@ -270,7 +270,7 @@ class Game:
         return False
                 
 
-    def check_mate(self):
+    def check_mate(self, color):
         """_summary_: Determines if the current player is in check and then if there is any possible move to 
         get out of check. Done by executing and subsequently reversing every move possible and checking if in check
         after move has been made.
@@ -278,15 +278,16 @@ class Game:
         Returns:
             _type_: Boolean return of true if checkmate, false if move to get out of check exists.
         """        
-        
-        if not self.is_in_check():
+        print(str(self.current_player), str(self.other_player))
+
+        if not self.is_in_check(color):
             
             return False
 
         else:
             for piece in self.board.pieces_lst:
                 
-                if self.current_player == piece.color:
+                if color == piece.color:
 
                     for move in piece.moves:
                         
@@ -306,7 +307,7 @@ class Game:
                         self.update_piece_location(move, piece)
                         self.get_new_moves()
                         
-                        if not self.is_in_check():
+                        if not self.is_in_check(color):
                             
                             #1st arg is piece that was just moved
                             #2nd arg is piece that was captured
@@ -332,7 +333,6 @@ class Game:
                             self.get_new_moves()
                             continue
             
-            print('check mate')
             return True
 
                     

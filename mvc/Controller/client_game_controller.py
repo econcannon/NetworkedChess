@@ -39,13 +39,13 @@ class ClientGameController:
                         message2 = pickle.loads(self.connection.recv(8192))
                         
                     except socket.timeout as e:
-                        self.connection.send(False.encode())
+                        self.connection.send('0'.encode())
                     
                     else:
                         if not (message1 and message2):
                             exit()
                         else:
-                            self.connection.send(True.encode())
+                            self.connection.send('1'.encode())
                             break
 
                 print('Received', message1, message2)
@@ -64,11 +64,12 @@ class ClientGameController:
             elif message[0] == 'Invalid':
                 self.make_move()
 
-            elif message[0] == 'Winner!':
-                self.view.display_winner(True)
+            elif message[0] == 'Mate':
 
-            elif message[1] == 'Loser...':
-                self.view.display_winner(False)
+                message = self.connection.recv(1024)
+                if message:
+                    self.view.display_winner(True)
+                else: self.view.display_winner(False)
 
             elif message:
                 continue

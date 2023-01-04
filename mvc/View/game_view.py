@@ -178,13 +178,13 @@ class GameView:
         # NEED TO UPDATE WITH LOSER IMAGES     
         else:
             if self.color == 'b':
-                title = pygame.image.load('mvc\\Model\\Imgs\\Black_Wins!.png')
+                title = pygame.image.load('mvc\\Model\\Imgs\\Black_loses.png')
                 title = pygame.transform.scale(title, (300, 100))
                 self.window.blit(title, (150, 250))
                 pygame.display.update()
             
             else:
-                title = pygame.image.load('mvc\\Model\\Imgs\\White_Wins!.png')
+                title = pygame.image.load('mvc\\Model\\Imgs\\White_loses.png')
                 title = pygame.transform.scale(title, (300, 100))
                 self.window.blit(title, (150, 250))
                 pygame.display.update()

@@ -48,7 +48,7 @@ class ServerGameController():
                     # If it is a valid move, check for checkmate, then send to opponent
                     if valid:
                         print('Valid Move')
-                        if not self.game.check_mate():
+                        if not self.game.check_mate(self.game.other_player):
                             ack = '1'.encode()                        
                             print('Sending', move1, move2)
                             message1 = pickle.dumps(move1)
@@ -73,6 +73,27 @@ class ServerGameController():
                             self.game.change_curr_player()
                             break
                         else: 
+                            ack = '1'.encode()                        
+                            print('Sending', move1, move2)
+                            message1 = pickle.dumps(move1)
+                            message2 = pickle.dumps(move2)
+                            code = 'Move'.encode()
+                            self.connection[self.first].send(ack)
+
+                            recv_ack = False
+                            while not recv_ack:
+                                print('Sending code...')
+                                self.connection[(self.first + 1)%2].send(code)
+                                time.sleep(.5)
+                                print('Sending message1...')
+                                self.connection[(self.first + 1)%2].send(message1)
+                                time.sleep(.5)
+                                print('Sending message2...')
+                                self.connection[(self.first + 1)%2].send(message2)
+                                time.sleep(2)
+                                recv_ack = self.connection[(self.first + 1)%2].recv(1024).decode()
+
+                            print('Move Sent')
                             first_count += 1
                             self.send_results(first_count)
                             return
@@ -100,7 +121,7 @@ class ServerGameController():
                     # If it is a valid move, check for checkmate, then send to opponent
                     if valid:
 
-                        if not self.game.check_mate():
+                        if not self.game.check_mate(self.game.other_player):
                             ack = '1'.encode()
                             print('Sending', move1, move2)
                             message1 = pickle.dumps(move1)
@@ -140,17 +161,28 @@ class ServerGameController():
     
     def send_results(self, count):
 
-        message1 = f'Winner! in {count} moves'.encode()
-        message2 = f'Loser... in {count} moves'.encode()
+        code = 'Mate'.encode()
+        message1 = '1'.encode()
+        message2 = '0'.encode()
         
         if (count%2 == self.first):
             
-            self.connection[self.first].send(message1)          
+            self.connection[self.first].send(code)
+            time.sleep(.1)
+            self.connection[(self.first + 1)%2].send(code)
+            time.sleep(.1)
+            self.connection[self.first].send(message1)     
+            time.sleep(.1)     
             self.connection[(self.first + 1)%2].send(message2)
 
         else: 
 
-            self.connection[self.first].send(message2)          
+            self.connection[self.first].send(code)
+            time.sleep(.1)
+            self.connection[(self.first + 1)%2].send(code)
+            time.sleep(.1)
+            self.connection[self.first].send(message2)    
+            time.sleep(.1)      
             self.connection[(self.first + 1)%2].send(message1)
 
 
@@ -182,8 +214,9 @@ class ServerGameController():
         self.game.get_new_moves()
 
         print(str(self.game.board))
-                
-        if not self.game.is_in_check():
+        
+        print(str(self.game.current_player))
+        if not self.game.is_in_check(self.game.current_player):
                 
             return True
 
@@ -193,4 +226,5 @@ class ServerGameController():
                 self.game.reverse_move(piece, move[0])
             else: self.game.reverse_move(piece, move[0], cell_val, move[1])
             self.game.append_all_moves()
+            print('current player in check')
             return False
