@@ -161,7 +161,7 @@ class GameView:
         Args:
             winner (_type_): The team that won the game
         """        
-        print('Game Over')
+        print('Game Over', winner)
         if winner:
             if self.color == 'b':
                 title = pygame.image.load('mvc\\Model\\Imgs\\Black_Wins!.png')

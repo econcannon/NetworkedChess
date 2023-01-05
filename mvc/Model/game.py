@@ -252,7 +252,7 @@ class Game:
                 if piece.color == 'b':
 
                     if white_king_loc in piece.moves:
-                        
+                        print('IS IN CHECK')
                         return True
                         
                     else: continue
@@ -262,7 +262,7 @@ class Game:
                 if piece.color == 'w':
             
                     if black_king_loc in piece.moves:
-                        
+                        print('IS IN CHECK')
                         return True
                         
                     else: continue
@@ -281,7 +281,6 @@ class Game:
         Returns:
             _type_: Boolean return of true if checkmate, false if move to get out of check exists.
         """        
-        print(str(self.current_player), str(self.other_player))
 
         if not self.is_in_check(color):
             
@@ -312,10 +311,6 @@ class Game:
                         
                         if not self.is_in_check(color):
                             
-                            #1st arg is piece that was just moved
-                            #2nd arg is piece that was captured
-                            #3rd arg is position of piece from arg 1
-                            #4th arg is position of captured piece
                             if not had_piece:
                                 self.reverse_move(piece = piece, location = self.temp_pos, move = move)
 
@@ -331,11 +326,11 @@ class Game:
                                 self.reverse_move(piece = piece, location = self.temp_pos, move = move)
                                 
                             else: 
-                                self.reverse_move(piece,  self.temp_pos, self.temp_piece, move)
+                                self.reverse_move(piece, self.temp_pos, self.temp_piece, move)
                             
                             self.get_new_moves()
                             continue
-            
+            print('check mate')
             return True
 
                     

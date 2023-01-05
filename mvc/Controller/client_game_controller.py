@@ -135,9 +135,11 @@ class ClientGameController:
                         self.game.reverse_move(piece = self.view.has_selected_piece, location = self.game.temp_pos, move = cell)
                     else: self.game.reverse_move(self.view.has_selected_piece, self.game.temp_pos, self.game.temp_piece, cell)
                     self.game.append_all_moves()
+                    self.game.board.update_list()
                     self.view.board.update_list()
                     self.view.display_in_check()
                     self.view.has_selected_piece = False
+                    self.view.display_board(self.color)
                     continue 
         
                 

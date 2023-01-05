@@ -40,7 +40,7 @@ class ServerGameController():
                         other_move2 = (7 - move2[0], 7 - move2[1])
                         valid = self.make_move((other_move1, other_move2))
                     else: valid = self.make_move((move1, move2))
-
+                    print(valid)
                     # If it is a valid move, check for checkmate, then send to opponent
                     if valid:
                         
@@ -60,7 +60,7 @@ class ServerGameController():
                                 self.connection[(self.first + 1)%2].send(message1)
                                 time.sleep(.5) 
                                 self.connection[(self.first + 1)%2].send(message2)
-                                time.sleep(2)
+                                time.sleep(1)
                                 recv_ack = self.connection[(self.first + 1)%2].recv(1024).decode()
 
                             self.game.change_curr_player()
@@ -106,7 +106,7 @@ class ServerGameController():
                     move1 = pickle.loads((self.connection[(self.first + 1)%2].recv(1024)))
                     move2 = pickle.loads((self.connection[(self.first + 1)%2].recv(1024)))
                     valid = self.make_move((move1, move2))
-
+                    print(valid)
                     # If it is a valid move, check for checkmate, then send to opponent
                     if valid:
 
@@ -126,7 +126,7 @@ class ServerGameController():
                                 self.connection[self.first].send(message1)
                                 time.sleep(.5)
                                 self.connection[self.first].send(message2)
-                                time.sleep(2)
+                                time.sleep(1)
                                 recv_ack = self.connection[self.first].recv(1024).decode()
                             
                             self.game.change_curr_player()
