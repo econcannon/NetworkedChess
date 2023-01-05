@@ -35,11 +35,12 @@ class ServerGameController():
                     move1 = pickle.loads(self.connection[self.first].recv(1024))
                     move2 = pickle.loads(self.connection[self.first].recv(1024))
 
-                    if self.game.current_player == 'b':
-                        other_move1 = (7 - move1[0], 7 - move1[1])
-                        other_move2 = (7 - move2[0], 7 - move2[1])
-                        valid = self.make_move((other_move1, other_move2))
-                    else: valid = self.make_move((move1, move2))
+                    #if self.game.current_player == 'b':
+                    #    other_move1 = (7 - move1[0], 7 - move1[1])
+                    #    other_move2 = (7 - move2[0], 7 - move2[1])
+                     #   valid = self.make_move((other_move1, other_move2))
+                    #else: valid = self.make_move((move1, move2))
+                    valid = self.make_move((move1, move2))
                     print(valid)
                     # If it is a valid move, check for checkmate, then send to opponent
                     if valid:
@@ -53,6 +54,7 @@ class ServerGameController():
                             self.connection[self.first].send(ack)
 
                             recv_ack = False
+                            t_count = 0
                             while not recv_ack:
                                 
                                 self.connection[(self.first + 1)%2].send(code)
@@ -61,7 +63,18 @@ class ServerGameController():
                                 time.sleep(.5) 
                                 self.connection[(self.first + 1)%2].send(message2)
                                 time.sleep(1)
-                                recv_ack = self.connection[(self.first + 1)%2].recv(1024).decode()
+
+                                try:
+                                    recv_ack = self.connection[(self.first + 1)%2].recv(1024).decode()
+                                
+                                except TimeoutError as e:
+                                    if not recv_ack:
+                                        t_count += 1
+                                        if t_count < 4:
+                                            continue
+                                        else: 
+                                            print('No ack received, program exiting')
+                                            exit()
 
                             self.game.change_curr_player()
                             break
@@ -75,6 +88,7 @@ class ServerGameController():
                             self.connection[self.first].send(ack)
 
                             recv_ack = False
+                            t_count = 0
                             while not recv_ack:
                                 
                                 self.connection[(self.first + 1)%2].send(code)
@@ -83,14 +97,25 @@ class ServerGameController():
                                 time.sleep(.5)
                                 self.connection[(self.first + 1)%2].send(message2)
                                 time.sleep(2)
-                                recv_ack = self.connection[(self.first + 1)%2].recv(1024).decode()
+
+                                try:
+                                    recv_ack = self.connection[(self.first + 1)%2].recv(1024).decode()
+                                
+                                except TimeoutError as e:
+                                    if not recv_ack:
+                                        t_count += 1
+                                        if t_count < 4:
+                                            continue
+                                        else: 
+                                            print('No ack received, program exiting')
+                                            exit()
 
                             first_count += 1
                             self.send_results(first_count)
                             return
 
                     else:
-                        ack = '0'.encode()
+                        ack = ''.encode()
                         self.connection[self.first].send(ack)
                 
                 count += 1
@@ -119,6 +144,7 @@ class ServerGameController():
                             self.connection[(self.first + 1)%2].send(ack)
                             
                             recv_ack = False
+                            t_count = 0
                             while not recv_ack:
                                 
                                 self.connection[self.first].send(code)
@@ -127,17 +153,61 @@ class ServerGameController():
                                 time.sleep(.5)
                                 self.connection[self.first].send(message2)
                                 time.sleep(1)
-                                recv_ack = self.connection[self.first].recv(1024).decode()
+
+                                try:
+                                    recv_ack = self.connection[self.first].recv(1024).decode()
+
+                                except TimeoutError as e:
+                                    if not recv_ack:
+                                        t_count += 1
+                                        if t_count < 4:
+                                            continue
+                                        else: 
+                                            print('No ack received, program exiting')
+                                            exit()
                             
                             self.game.change_curr_player()
                             break
+
                         else: 
+
+                            ack = '1'.encode()                        
+                            print('Sending', move1, move2)
+                            message1 = pickle.dumps(move1)
+                            message2 = pickle.dumps(move2)
+                            code = 'Move'.encode()
+                            self.connection[(self.first + 1)%2].send(ack)
+
+                            recv_ack = False
+                            t_count = 0
+                            while not recv_ack:
+                                
+                                self.connection[self.first].send(code)
+                                time.sleep(.5)
+                                self.connection[self.first].send(message1)
+                                time.sleep(.5)
+                                self.connection[self.first].send(message2)
+                                time.sleep(2)
+
+                                try:
+                                    recv_ack = self.connection[self.first].recv(1024).decode()
+
+                                except TimeoutError as e:
+                                    if not recv_ack:
+                                        t_count += 1
+                                        if t_count < 4:
+                                            continue
+                                        else: 
+                                            print('No ack received, program exiting')
+                                            exit()
+                                
+
                             second_count += 1
                             self.send_results(second_count)
                             return
 
                     else:
-                        ack = '0'.encode()
+                        ack = ''.encode()
                         self.connection[(self.first + 1)%2].send(ack)
                         
                 count += 1
@@ -148,9 +218,9 @@ class ServerGameController():
 
         code = 'Mate'.encode()
         message1 = '1'.encode()
-        message2 = '0'.encode()
+        message2 = ''.encode()
         
-        if (count%2 == self.first):
+        if (self.game.current_player == 'w'):
             print('Entered First')
             self.connection[self.first].send(code)
             time.sleep(.1)
@@ -180,7 +250,7 @@ class ServerGameController():
                       creates the GUI and checks for win conditions.
 
         """        
-        
+        print(self.game.current_player, 'moved', move)
         piece = self.game.board.get_cell(move[0][0], move[0][1])
         if not piece:
             return False
@@ -201,6 +271,7 @@ class ServerGameController():
         # Updates attribute info
         self.game.update_piece_location(move[1], piece)
         self.game.get_new_moves()
+        self.game.append_all_moves()
 
         if not self.game.is_in_check(self.game.current_player):
                 
@@ -211,6 +282,5 @@ class ServerGameController():
             if not had_piece:
                 self.game.reverse_move(piece, move[0])
             else: self.game.reverse_move(piece, move[0], cell_val, move[1])
-            self.game.append_all_moves()
             print('current player in check')
             return False

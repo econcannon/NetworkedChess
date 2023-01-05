@@ -177,16 +177,19 @@ class Game:
             self.board.set_cell(other, move[0], move[1])
             #restores list 
             self.board.pieces_lst.append(other)
+            self.append_all_moves()
             if self.view:
                 self.view.display_board(self.color)
+            
 
         else: 
             piece.turn -= 1
+            self.remove_piece(piece.location)
             #restore attribute
             piece.location = location
             #restore board
             self.board.set_cell(piece, location[0], location[1])
-            self.remove_piece(piece.location)
+            self.append_all_moves()
             if self.view:
                 self.view.display_board(self.color)
 
@@ -252,7 +255,7 @@ class Game:
                 if piece.color == 'b':
 
                     if white_king_loc in piece.moves:
-                        print('IS IN CHECK')
+                        print('IS IN CHECK FROM', str(piece))
                         return True
                         
                     else: continue
@@ -262,7 +265,7 @@ class Game:
                 if piece.color == 'w':
             
                     if black_king_loc in piece.moves:
-                        print('IS IN CHECK')
+                        print('IS IN CHECK FROM', str(piece))
                         return True
                         
                     else: continue
@@ -292,7 +295,7 @@ class Game:
                 if color == piece.color:
 
                     for move in piece.moves:
-                        
+                        #print(str(self.board))
                         move_val = self.board.get_cell(move[0], move[1])
 
                         if move_val == 0:
@@ -308,6 +311,7 @@ class Game:
                         #updates attribute info
                         self.update_piece_location(move, piece)
                         self.get_new_moves()
+                        print(str(self.board))
                         
                         if not self.is_in_check(color):
                             

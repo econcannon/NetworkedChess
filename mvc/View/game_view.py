@@ -53,7 +53,7 @@ class GameView:
 
         self.has_selected_piece = False
         self.has_selected_block = []
-        self.display_board('w')
+        self.display_board(self.color)
                                 
 
     def display_board(self, cur_player):
@@ -91,7 +91,7 @@ class GameView:
         Args:
             piece (_type_): piece to be selected
         """        
- 
+        print(str(piece))
         if not self.has_selected_piece == piece:
             self.has_selected_piece = piece
             
