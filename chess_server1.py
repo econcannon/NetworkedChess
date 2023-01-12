@@ -4,10 +4,11 @@
 #In check Checking
 #	Sends a notification back to reverse the move locally and make another move.
 
-from mvc.Controller.server_game_controller import ServerGameController
+from mvc.Controller.server_game_controller1 import ServerGameController
 import socket
 import time
 import atexit
+import subprocess
 
 
 class Chess_Server():
@@ -18,6 +19,8 @@ class Chess_Server():
         HOST = ''
         PORT = 12004
         IDENTIFIER = (HOST, PORT)
+
+        subprocess.call([r'C:\Users\ericd\OneDrive\Desktop\NEU\!Coding\2140\networkedChess\open_port.bat'])
 
         # Create and bind Server Soceket
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -94,3 +97,9 @@ class Chess_Server():
                 connection.close()
         self.server_socket.close()
         print('Connections Closed')
+        self.close_port()
+
+
+    def close_port(self):
+
+        subprocess.call([r'C:\Users\ericd\OneDrive\Desktop\NEU\!Coding\2140\networkedChess\close_port.bat'])

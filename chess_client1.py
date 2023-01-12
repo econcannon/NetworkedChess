@@ -1,6 +1,6 @@
 # This file is intended to initialize the client side of the chess game
 
-from mvc.Controller.client_game_controller import ClientGameController
+from mvc.Controller.client_game_controller1 import ClientGameController
 import socket
 import time
 import atexit
@@ -10,7 +10,7 @@ class Chess_Client():
     def __init__(self) -> None:
         
         # Initialize variables
-        server_address = '192.168.2.240'
+        server_address = '155.33.81.197'
         server_port_number = 12004
         server_identifier = (server_address, server_port_number)
 
