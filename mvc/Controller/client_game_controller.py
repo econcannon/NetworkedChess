@@ -71,10 +71,10 @@ class ClientGameController:
                 else: self.view.display_winner(False)
                 return
 
-            elif message:
+            elif message[0]:
                 continue
 
-            elif not message:
+            elif not message[0]:
                 self.game.server_reverse_move()
                 self.game.append_all_moves()
                 self.view.board.update_list()
@@ -141,10 +141,3 @@ class ClientGameController:
                     self.view.has_selected_piece = False
                     self.view.display_board(self.color)
                     continue 
-        
-                
-        #winner = self.game.get_winner()
-        #self.view.display_winner(winner)
-        #pygame.time.delay(7000)
-        #pygame.quit()
-        #self.connection.close()

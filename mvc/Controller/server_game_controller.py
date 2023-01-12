@@ -209,6 +209,7 @@ class ServerGameController():
                     else:
                         ack = ''.encode()
                         self.connection[(self.first + 1)%2].send(ack)
+                        print('Negative ack sent')
                         
                 count += 1
                 second_count += 1

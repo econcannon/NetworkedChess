@@ -32,8 +32,6 @@ class Chess_Server():
         # Change default timeout
         self.server_socket.settimeout(60)
 
-        
-        
         print('Server listening for connection...')
         self.server_socket.listen(2)
         num_connections = 0
@@ -87,15 +85,6 @@ class Chess_Server():
 
         gcont = ServerGameController(self.connection_socket, self.first)
         gcont.start_game()
-
-    def send_move(self, connection, move):
-
-        connection.send(move.encode())
-
-    
-    def receive_move(self, connection):
-
-        return connection.recv(2048).decode() 
 
 
     def disconnect(self):
